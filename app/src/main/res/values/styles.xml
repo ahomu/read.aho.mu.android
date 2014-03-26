@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
+        <item name="actionBarTabTextStyle">@style/MyActionBarTabText</item>
+
+        <item name="android:actionBarStyle">@style/MyActionBarSolid</item>
+        <item name="actionBarStyle">@style/MyActionBarSolid</item>
+
+    </style>
+
+    <!-- ActionBar tabs text -->
+    <style name="MyActionBarTabText" parent="@style/Widget.AppCompat.ActionBar.TabText">
+        <item name="android:textColor">#339900</item>
+    </style>
+
+    <style name="MyActionBarSolid" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="android:backgroundStacked">#fff</item>
+        <item name="backgroundStacked">#fff</item>
+    </style>
+
+    <!--@see https://gist.github.com/kerukerupappa/6159846-->
+    <style name="Theme.AppCompat.Light.NoActionBar" parent ="@style/Theme.AppCompat.Light">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

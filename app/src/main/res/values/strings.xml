@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">read.aho.mu</string>
+    <string name="hello_world">Hello world!!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_section1">section 1</string>
+    <string name="title_section2">section 2</string>
+    <string name="title_section3">section 3</string>
+    <string name="title_section4">section 4</string>
+    <string name="title_section5">section 5</string>
+
+</resources>
