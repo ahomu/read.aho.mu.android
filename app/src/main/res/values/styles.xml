@@ -20,7 +20,7 @@
     </style>
 
     <!--@see https://gist.github.com/kerukerupappa/6159846-->
-    <style name="Theme.AppCompat.Light.NoActionBar" parent ="@style/Theme.AppCompat.Light">
+    <style name="Theme.AppCompat.NoActionBar" parent ="@style/Theme.AppCompat">
         <item name="android:windowNoTitle">true</item>
     </style>
 </resources>
