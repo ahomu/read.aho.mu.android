@@ -8,10 +8,8 @@
 
         <item name="android:actionBarStyle">@style/MyActionBarSolid</item>
         <item name="actionBarStyle">@style/MyActionBarSolid</item>
-
     </style>
 
-    <!-- ActionBar tabs text -->
     <style name="MyActionBarTabText" parent="@style/Widget.AppCompat.ActionBar.TabText">
         <item name="android:textColor">#339900</item>
     </style>

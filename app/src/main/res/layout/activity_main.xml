@@ -1,23 +1,57 @@
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-                                   xmlns:tools="http://schemas.android.com/tools"
-                                   android:id="@+id/pager"
-                                   android:layout_width="match_parent"
-                                   android:layout_height="match_parent"
-                                   tools:context=".MainActivity" >
+<android.support.v4.app.FragmentTabHost xmlns:android="http://schemas.android.com/apk/res/android"
+                                        android:id="@android:id/tabhost"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <!-- タブパネル操作のためのTabWidgetを配置 -->
+        <RelativeLayout
+                android:id="@+id/layTab"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" >
 
-    <!--
-    This title strip will display the currently visible page title, as well as the page
-    titles for adjacent pages.
-    -->
+            <HorizontalScrollView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:fillViewport="true"
+                    android:scrollbars="none" >
 
-    <!--<android.support.v4.view.PagerTabStrip-->
-            <!--android:id="@+id/pager_title_strip"-->
+                <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                </TabWidget>
+            </HorizontalScrollView>
+        </RelativeLayout>
+
+        <!--<TabWidget-->
+            <!--android:id="@android:id/tabs"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="top"-->
-            <!--android:background="#33b5e5"-->
-            <!--android:paddingBottom="16dp"-->
-            <!--android:paddingTop="16dp"-->
-            <!--android:textColor="#fff" />-->
+            <!--android:layout_weight="0"-->
+            <!--android:orientation="horizontal" />-->
+        <!-- タブパネルを束ねるためのコンテナーを配置 -->
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0" />
+        <!-- タブが押された時に表示するコンテンツ領域(Fragment) -->
 
-</android.support.v4.view.ViewPager>
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</android.support.v4.app.FragmentTabHost>
