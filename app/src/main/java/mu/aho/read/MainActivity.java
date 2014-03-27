@@ -1,32 +1,18 @@
 package mu.aho.read;
 
-import android.content.Context;
 import android.support.v4.app.*;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
-import android.widget.TabHost;
-import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBar.TabListener;
 import mu.aho.read.view.MyTab;
 
 // @see http://davidjkelley.net/?p=34
@@ -46,7 +32,7 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
     ViewPager mViewPager;
     FragmentTabHost mTabHost;
     HorizontalScrollView mScroller;
-    MyPageAdapter pageAdapter;
+    CategoriesAdapter pageAdapter;
     private String[] TabTag = { "hogeeeeeeee", "fugaaaaa", "piyooooo", "higeeeeeeeeeee" };
 
     @Override
@@ -65,14 +51,10 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
         List<Fragment> fragments = new ArrayList<Fragment>();
 
         // fragments
-        EntriesFragment a = EntriesFragment.newInstance("hoge", "red");
-        EntriesFragment b = EntriesFragment.newInstance("fuga", "blue");
-        EntriesFragment c = EntriesFragment.newInstance("piyo", "yellow");
-        EntriesFragment d = EntriesFragment.newInstance("hige", "green");
-        fragments.add(a);
-        fragments.add(b);
-        fragments.add(c);
-        fragments.add(d);
+        CategoryFragment a = CategoryFragment.newInstance("hoge", "red");
+        CategoryFragment b = CategoryFragment.newInstance("fuga", "blue");
+        CategoryFragment c = CategoryFragment.newInstance("piyo", "yellow");
+        CategoryFragment d = CategoryFragment.newInstance("hige", "green");
 
         // tabs
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
@@ -95,15 +77,22 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
         mTabHost.setOnTabChangedListener(this);
 
         // view pager
-        pageAdapter = new MyPageAdapter(getSupportFragmentManager(), fragments);
+        pageAdapter = new CategoriesAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setOnPageChangeListener(this);
+
+        fragments.add(a);
+        fragments.add(b);
+        fragments.add(c);
+        fragments.add(d);
+        pageAdapter.notifyDataSetChanged();
+
     }
 
-    public class MyPageAdapter extends FragmentPagerAdapter {
+    public class CategoriesAdapter extends FragmentPagerAdapter {
         private List<Fragment> fragments;
 
-        public MyPageAdapter(FragmentManager fm, List<Fragment> fragments) {
+        public CategoriesAdapter(FragmentManager fm, List<Fragment> fragments) {
             super(fm);
             this.fragments = fragments;
         }

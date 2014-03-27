@@ -14,10 +14,10 @@ import android.widget.TextView;
  * Created by ahomu on 3/26/14.
  */
 
-public class EntriesFragment extends Fragment {
+public class CategoryFragment extends Fragment {
 
-    public static final EntriesFragment newInstance(String sampleText, String hex) {
-        EntriesFragment f = new EntriesFragment();
+    public static final CategoryFragment newInstance(String sampleText, String hex) {
+        CategoryFragment f = new CategoryFragment();
 
         Bundle b = new Bundle();
         b.putString("category", sampleText);
