@@ -76,6 +76,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "CategoryFragment onActivityCreated");
         mLoaderManager = getLoaderManager();
         Bundle argsForLoader = new Bundle();
         argsForLoader.putString("entriesUrl", getArguments().getString("entriesUrl"));
@@ -100,8 +101,12 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
     @Override
     public void onLoadFinished(Loader<JSONObject> loader, JSONObject result) {
 
+        list.clear();
+
         try {
+            Log.d(TAG, "list size -> " + list.size());
             Log.d(TAG, result.toString());
+            // TODO 最初からArrayList
             JSONArray entries = result.getJSONArray("entries");
             JSONObject entry;
             Integer iz = entries.length();
@@ -114,11 +119,6 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         }
 
         setListAdapter(new EntriesAdapter(getActivity(), list));
-
-        // TODO エントリーは起動時に1回読んだら、あとはsavedInstanceで振り回そうと思う次第
-        // TODO あとpull to refreshのときどうしようー
-        // FIXME ので、ここでasyncLoaderを使い捨てるけど、よくない感じがするー
-        getLoaderManager().destroyLoader(0);
     }
 
     @Override
