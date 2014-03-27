@@ -100,13 +100,13 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
 
     @Override
     public void onLoadFinished(Loader<JSONObject> loader, JSONObject result) {
+        Log.d(TAG, "list size -> " + list.size());
+        Log.d(TAG, result.toString());
 
         list.clear();
 
         try {
-            Log.d(TAG, "list size -> " + list.size());
-            Log.d(TAG, result.toString());
-            // TODO 最初からArrayList
+            // TODO 最初からArrayListとかふんわりとした型で取得できないか？
             JSONArray entries = result.getJSONArray("entries");
             JSONObject entry;
             Integer iz = entries.length();

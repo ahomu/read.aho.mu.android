@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mScroller = (HorizontalScrollView) findViewById(R.id.scroller);
-        mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        mViewPager.setPageTransformer(true, new DepthPageTransformer());
 
         // tabs
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
