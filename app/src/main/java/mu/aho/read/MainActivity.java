@@ -44,10 +44,10 @@ import mu.aho.read.view.MyTab;
 public class MainActivity extends FragmentActivity implements OnTabChangeListener, OnPageChangeListener {
 
     ViewPager mViewPager;
-    TabHost mTabHost;
+    FragmentTabHost mTabHost;
     HorizontalScrollView mScroller;
     MyPageAdapter pageAdapter;
-    private String[] TabTag = { "hogeeeeeeeeeeeeee", "fugaaaaaaaaaaa", "piyoooooooooo", "higeeeeeeeeeee" };
+    private String[] TabTag = { "hogeeeeeeee", "fugaaaaa", "piyooooo", "higeeeeeeeeeee" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
 //        actionBar.setDisplayShowTitleEnabled(false);
 //        actionBar.setDisplayShowHomeEnabled(false);
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mTabHost = (TabHost) findViewById(android.R.id.tabhost);
+        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mScroller = (HorizontalScrollView) findViewById(R.id.scroller);
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         List<Fragment> fragments = new ArrayList<Fragment>();
@@ -75,7 +75,7 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
         fragments.add(d);
 
         // tabs
-        mTabHost.setup();
+        mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
         for (int i = 0; i < TabTag.length; i++) {
 
             String tagName = TabTag[i];
@@ -89,8 +89,8 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
             TabSpec tabSpec = mTabHost.newTabSpec(tagName);
             tabSpec.setIndicator(view);
 
-            tabSpec.setContent(new MyTabFactory(this));
-            mTabHost.addTab(tabSpec);
+            // ここでのtabcontent用Fragmentは実際には使わないのでダミー
+            mTabHost.addTab(tabSpec, Fragment.class, bundle);
         }
         mTabHost.setOnTabChangedListener(this);
 
@@ -116,23 +116,6 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
         @Override
         public int getCount() {
             return this.fragments.size();
-        }
-    }
-
-    // tabhost向けのダミーなのでスカスカだぜ
-    public class MyTabFactory implements TabContentFactory {
-
-        private final Context mContext;
-
-        public MyTabFactory(Context context) {
-            mContext = context;
-        }
-
-        public View createTabContent(String tag) {
-            View v = new View(mContext);
-            v.setMinimumWidth(0);
-            v.setMinimumHeight(0);
-            return v;
         }
     }
 

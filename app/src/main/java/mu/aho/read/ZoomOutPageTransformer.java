@@ -7,6 +7,7 @@ import android.view.View;
 /**
  * Created by ayumusato on 3/27/14.
  */
+// @see https://groups.google.com/forum/#!msg/android-group-japan/Y1-58qwaUhg/AJfBjPUV4h8J
 // @see http://stuff.mit.edu/afs/sipb/project/android/docs/training/animation/screen-slide.html#pagetransformer
 public class ZoomOutPageTransformer implements PageTransformer {
     private static float MIN_SCALE = 0.85f;
