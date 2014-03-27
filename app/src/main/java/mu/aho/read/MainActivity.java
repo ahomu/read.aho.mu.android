@@ -93,11 +93,12 @@ public class MainActivity extends FragmentActivity
 
     public void onArticleSelected(String url, String title) {
         Log.d(TAG, url);
-        Intent intent = new Intent(MainActivity.this, BrowseActivity.class);
+        final Intent intent = new Intent(MainActivity.this, BrowseActivity.class);
 
         intent.putExtra("url", url);
         intent.putExtra("title", title);
-        startActivity(intent);
+//        startActivity(intent);
+        animatedStartActivity(intent);
     }
 
     public class CategoriesAdapter extends FragmentPagerAdapter {
@@ -200,4 +201,22 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onLoaderReset(Loader<JSONObject> loader) {}
+
+    @Override
+    protected void onResume() {
+        ActivitySwitcher.animationIn(findViewById(android.R.id.tabhost), getWindowManager());
+        super.onResume();
+    }
+
+    private void animatedStartActivity(final Intent intent) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        ActivitySwitcher.animationOut(findViewById(android.R.id.tabhost),
+                getWindowManager(),
+                new ActivitySwitcher.AnimationFinishedListener() {
+                    @Override
+                    public void onAnimationFinished() {
+                        startActivity(intent);
+                    }
+                });
+    }
 }

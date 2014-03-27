@@ -1,5 +1,6 @@
 package mu.aho.read;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
@@ -26,5 +27,12 @@ public class BrowseActivity extends ActionBarActivity {
         WebViewFragment webViewFrag = WebViewFragment.newInstance();
         webViewFrag.setArguments(extras);
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, webViewFrag).commit();
+    }
+
+    @Override
+    protected void onResume() {
+        // animateIn this activity
+        ActivitySwitcher.animationIn(findViewById(android.R.id.content), getWindowManager());
+        super.onResume();
     }
 }
