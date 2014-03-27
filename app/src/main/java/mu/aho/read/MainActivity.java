@@ -55,8 +55,7 @@ public class MainActivity extends FragmentActivity
 
         // load categories
         mLoaderManager = getSupportLoaderManager();
-        Bundle argsForLoader = new Bundle();
-        mLoaderManager.initLoader(0, argsForLoader, this);
+        mLoaderManager.initLoader(0, null, this);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
@@ -97,7 +96,6 @@ public class MainActivity extends FragmentActivity
 
         intent.putExtra("url", url);
         intent.putExtra("title", title);
-//        startActivity(intent);
         animatedStartActivity(intent);
     }
 
@@ -153,7 +151,7 @@ public class MainActivity extends FragmentActivity
         int iz = tabWidget.getChildCount();
         for (int i = 0; i < iz; i++) {
             tab = (CategoryTabView) tabWidget.getChildAt(i);
-            tab.setBackgroundColor("red");
+            tab.setBackgroundColor("black");
         }
         tab = (CategoryTabView) tabWidget.getChildAt(pos);
         tab.setBackgroundColor("blue");
@@ -170,7 +168,6 @@ public class MainActivity extends FragmentActivity
             case 0:
                 Log.d(TAG, "ON CREATE LOADER :" + "http://read.aho.mu/categories.json");
                 loader = new HttpAsyncTaskLoader(this, "http://read.aho.mu/categories.json");
-//                loader.onContentChanged();
                 return loader;
             default:
                 return null;
@@ -179,6 +176,8 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onLoadFinished(Loader<JSONObject> loader, JSONObject result) {
+        Log.d(TAG, "onLoadFinished(੭ु˵＞ヮ＜)੭ु⁾⁾");
+        Log.d(TAG, result.toString());
         try {
             JSONArray categories = result.getJSONArray("categories");
             JSONObject category;
@@ -196,7 +195,10 @@ public class MainActivity extends FragmentActivity
         }
 
         pageAdapter.notifyDataSetChanged();
-        Log.d(TAG, result.toString());
+
+        // TODO カテゴリーは起動時に1回読んだら、あとはsavedInstanceで振り回そうと思う次第
+        // FIXME ので、ここでasyncLoaderを使い捨てるけど、よくない感じがするー
+        getSupportLoaderManager().destroyLoader(0);
     }
 
     @Override

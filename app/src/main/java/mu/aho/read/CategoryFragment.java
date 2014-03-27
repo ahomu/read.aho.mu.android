@@ -114,7 +114,11 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         }
 
         setListAdapter(new EntriesAdapter(getActivity(), list));
-        Log.d(TAG, result.toString());
+
+        // TODO エントリーは起動時に1回読んだら、あとはsavedInstanceで振り回そうと思う次第
+        // TODO あとpull to refreshのときどうしようー
+        // FIXME ので、ここでasyncLoaderを使い捨てるけど、よくない感じがするー
+        getLoaderManager().destroyLoader(0);
     }
 
     @Override

@@ -15,6 +15,7 @@ import java.io.IOException;
 /**
  * Created by ayumusato on 3/27/14.
  */
+// @see http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html
 public class HttpAsyncTaskLoader extends AsyncTaskLoader {
 
     private final String TAG = getClass().getSimpleName();
