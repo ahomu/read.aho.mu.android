@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.widget.TabWidget;
 import mu.aho.read.loader.HttpAsyncTaskLoader;
 import mu.aho.read.view.CategoryTabView;
 import org.json.JSONArray;
@@ -68,7 +69,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<JS
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setOnPageChangeListener(this);
 
-        addTabAndFragment("ALL FEEDS", "");
+        addTabAndFragment("ALL FEEDS", "http://read.aho.mu/top/index.json");
         pageAdapter.notifyDataSetChanged();
     }
 
@@ -122,25 +123,27 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<JS
 
     @Override
     public void onPageSelected(int arg0) {
+        // FIXME 処理がゴリゴリすぎだぃ
+        TabWidget tabWidget = this.mTabHost.getTabWidget();
+
         int pos = this.mViewPager.getCurrentItem();
         this.mTabHost.setCurrentTab(pos);
 
-        Log.v("log", mScroller.getWidth() + "");
-
         int delta = 0;
         for (int i = 0; i < pos; i++) {
-            delta += this.mTabHost.getTabWidget().getChildAt(i).getWidth();
+            delta += tabWidget.getChildAt(i).getWidth();
         }
-        delta += (this.mTabHost.getTabWidget().getChildAt(pos).getWidth() / 2);
+        delta += (tabWidget.getChildAt(pos).getWidth() / 2);
         delta -= (mScroller.getWidth() / 2);
         CategoryTabView tab;
 
-        for (int i = 0; i < 4; i++) {
-            tab = (CategoryTabView) this.mTabHost.getTabWidget().getChildAt(i);
-            tab.setColor("red");
+        int iz = tabWidget.getChildCount();
+        for (int i = 0; i < iz; i++) {
+            tab = (CategoryTabView) tabWidget.getChildAt(i);
+            tab.setBackgroundColor("red");
         }
-        tab = (CategoryTabView) this.mTabHost.getTabWidget().getChildAt(pos);
-        tab.setColor("blue");
+        tab = (CategoryTabView) tabWidget.getChildAt(pos);
+        tab.setBackgroundColor("blue");
 
         this.mScroller.scrollTo(delta, 0);
     }

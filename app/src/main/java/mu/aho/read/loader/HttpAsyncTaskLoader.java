@@ -41,6 +41,7 @@ public class HttpAsyncTaskLoader extends AsyncTaskLoader {
         try {
             // TODO httpClientのインスタンスを使い回せないか？
             jsonString = (String) httpClient.execute(request, new HttpResponseHandler());
+            Log.d(TAG, jsonString);
         } catch(ClientProtocolException e) {
             Log.e(TAG, "ClientProtocolException!");
             e.printStackTrace();

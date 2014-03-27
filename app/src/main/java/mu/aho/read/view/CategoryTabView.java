@@ -27,8 +27,7 @@ public class CategoryTabView extends FrameLayout {
         addView(child);
     }
 
-    public void setColor(String hex) {
-        TextView textView = (TextView) this.findViewById(R.id.tag_label);
-        textView.setBackgroundColor(Color.parseColor(hex));
+    public void setBackgroundColor(String hex) {
+        this.setBackgroundColor(Color.parseColor(hex));
     }
 }
