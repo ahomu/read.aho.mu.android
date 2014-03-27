@@ -1,11 +1,13 @@
 package mu.aho.read;
 
 import android.support.v4.app.*;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -13,7 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import mu.aho.read.view.MyTab;
+import mu.aho.read.loader.HttpAsyncTaskLoader;
+import mu.aho.read.view.CategoryTabView;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 // @see http://davidjkelley.net/?p=34
 // @see http://just-another-blog.net/programming/how-to-implement-horizontal-view-swiping-with-tabs/
@@ -27,53 +33,34 @@ import mu.aho.read.view.MyTab;
 /**
  * Created by ahomu on 3/26/14.
  */
-public class MainActivity extends FragmentActivity implements OnTabChangeListener, OnPageChangeListener {
+public class MainActivity extends FragmentActivity implements LoaderCallbacks<JSONObject>, OnTabChangeListener, OnPageChangeListener {
+
+    private final String TAG = getClass().getSimpleName();
 
     ViewPager mViewPager;
     FragmentTabHost mTabHost;
     HorizontalScrollView mScroller;
+    LoaderManager mLoaderManager;
     CategoriesAdapter pageAdapter;
-    private String[] TabTag = { "hogeeeeeeee", "fugaaaaa", "piyooooo", "higeeeeeeeeeee" };
+    List<Fragment> fragments = new ArrayList<Fragment>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        final ActionBar actionBar = getSupportActionBar();
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-//        actionBar.setDisplayShowTitleEnabled(false);
-//        actionBar.setDisplayShowHomeEnabled(false);
+        // load categories
+        mLoaderManager = getSupportLoaderManager();
+        Bundle argsForLoader = new Bundle();
+        mLoaderManager.initLoader(0, argsForLoader, this);
+
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mScroller = (HorizontalScrollView) findViewById(R.id.scroller);
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        List<Fragment> fragments = new ArrayList<Fragment>();
-
-        // fragments
-        CategoryFragment a = CategoryFragment.newInstance("hoge", "red");
-        CategoryFragment b = CategoryFragment.newInstance("fuga", "blue");
-        CategoryFragment c = CategoryFragment.newInstance("piyo", "yellow");
-        CategoryFragment d = CategoryFragment.newInstance("hige", "green");
 
         // tabs
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
-        for (int i = 0; i < TabTag.length; i++) {
-
-            String tagName = TabTag[i];
-
-            Log.d("tabSpec", TabTag[i]);
-
-            Bundle bundle = new Bundle();
-            bundle.putString("category", tagName);
-
-            View view = new MyTab(this, tagName);
-            TabSpec tabSpec = mTabHost.newTabSpec(tagName);
-            tabSpec.setIndicator(view);
-
-            // ここでのtabcontent用Fragmentは実際には使わないのでダミー
-            mTabHost.addTab(tabSpec, Fragment.class, bundle);
-        }
         mTabHost.setOnTabChangedListener(this);
 
         // view pager
@@ -81,12 +68,23 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setOnPageChangeListener(this);
 
-        fragments.add(a);
-        fragments.add(b);
-        fragments.add(c);
-        fragments.add(d);
+        addTabAndFragment("ALL FEEDS", "");
         pageAdapter.notifyDataSetChanged();
+    }
 
+    public void addTabAndFragment(String categoryName, String entriesUrl) {
+        CategoryFragment frag = CategoryFragment.newInstance(categoryName, entriesUrl);
+        CategoryTabView tabView = new CategoryTabView(this, categoryName);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("category", categoryName);
+
+        TabSpec tabSpec = mTabHost.newTabSpec(categoryName);
+        tabSpec.setIndicator(tabView);
+
+        // ここでのtabcontent用Fragmentは実際には使わないのでダミー
+        mTabHost.addTab(tabSpec, Fragment.class, bundle);
+        fragments.add(frag);
     }
 
     public class CategoriesAdapter extends FragmentPagerAdapter {
@@ -108,7 +106,7 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
         }
     }
 
-    // Manages the Tab changes, synchronizing it with Pages
+    @Override
     public void onTabChanged(String tag) {
         int pos = this.mTabHost.getCurrentTab();
         this.mViewPager.setCurrentItem(pos);
@@ -118,7 +116,6 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
     public void onPageScrollStateChanged(int arg0) {
     }
 
-    // Manages the Page changes, synchronizing it with Tabs
     @Override
     public void onPageScrolled(int arg0, float arg1, int arg2) {
     }
@@ -136,15 +133,56 @@ public class MainActivity extends FragmentActivity implements OnTabChangeListene
         }
         delta += (this.mTabHost.getTabWidget().getChildAt(pos).getWidth() / 2);
         delta -= (mScroller.getWidth() / 2);
-        MyTab tab;
+        CategoryTabView tab;
 
         for (int i = 0; i < 4; i++) {
-            tab = (MyTab) this.mTabHost.getTabWidget().getChildAt(i);
+            tab = (CategoryTabView) this.mTabHost.getTabWidget().getChildAt(i);
             tab.setColor("red");
         }
-        tab = (MyTab) this.mTabHost.getTabWidget().getChildAt(pos);
+        tab = (CategoryTabView) this.mTabHost.getTabWidget().getChildAt(pos);
         tab.setColor("blue");
 
         this.mScroller.scrollTo(delta, 0);
     }
+
+    @Override
+    // @see http://stackoverflow.com/questions/10321712/loader-doesnt-start-after-calling-initloader
+    // @see http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html
+    public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
+        AsyncTaskLoader loader;
+        switch (id) {
+            case 0:
+                Log.d(TAG, "ON CREATE LOADER :" + "http://read.aho.mu/categories.json");
+                loader = new HttpAsyncTaskLoader(this, "http://read.aho.mu/categories.json");
+//                loader.onContentChanged();
+                return loader;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<JSONObject> loader, JSONObject result) {
+        try {
+            JSONArray categories = result.getJSONArray("categories");
+            JSONObject category;
+            Integer iz = categories.length();
+            for (int i = 0; i < iz; i++) {
+                category = categories.getJSONObject(i);
+                addTabAndFragment(
+                        category.getString("name").toUpperCase(),
+                        "http://read.aho.mu/categories/" + category.getString("id") + ".json"
+                );
+                Log.d(TAG, category.getString("name") + "Added");
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        pageAdapter.notifyDataSetChanged();
+        Log.d(TAG, result.toString());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<JSONObject> loader) {}
 }

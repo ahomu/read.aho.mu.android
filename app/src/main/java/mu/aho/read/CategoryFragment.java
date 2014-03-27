@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 public class CategoryFragment extends Fragment {
 
-    public static final CategoryFragment newInstance(String sampleText, String hex) {
+    public static final CategoryFragment newInstance(String sampleText, String entriesUrl) {
         CategoryFragment f = new CategoryFragment();
 
         Bundle b = new Bundle();
         b.putString("category", sampleText);
-        b.putString("color",    hex);
+        b.putString("entriesUrl", entriesUrl);
         f.setArguments(b);
 
         return f;
@@ -38,7 +38,6 @@ public class CategoryFragment extends Fragment {
         textView.setGravity(Gravity.CENTER);
         textView.setText(getArguments().getString("category"));
         textView.setTextColor(Color.parseColor("black"));
-        textView.setBackgroundColor(Color.parseColor(getArguments().getString("color")));
 
         return textView;
     }

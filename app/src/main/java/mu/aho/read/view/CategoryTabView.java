@@ -5,22 +5,21 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import mu.aho.read.R;
 
 /**
  * Created by ayumusato on 3/26/14.
  */
-public class MyTab extends FrameLayout {
+public class CategoryTabView extends FrameLayout {
     LayoutInflater inflater;
 
-    public MyTab(Context context) {
+    public CategoryTabView(Context context) {
         super(context);
         inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public MyTab(Context context, String title) {
+    public CategoryTabView(Context context, String title) {
         this(context);
         View child = inflater.inflate(R.layout.tab, null);
         TextView textView = (TextView) child.findViewById(R.id.tag_label);
@@ -29,7 +28,7 @@ public class MyTab extends FrameLayout {
     }
 
     public void setColor(String hex) {
-        ImageView imageView = (ImageView) this.findViewById(R.id.tag_image);
-        imageView.setBackgroundColor(Color.parseColor(hex));
+        TextView textView = (TextView) this.findViewById(R.id.tag_label);
+        textView.setBackgroundColor(Color.parseColor(hex));
     }
 }
