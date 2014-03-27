@@ -38,12 +38,12 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
     LoaderManager mLoaderManager;
 
     public static final CategoryFragment newInstance(String sampleText, String entriesUrl) {
-        CategoryFragment f = new CategoryFragment();
-        Bundle b = new Bundle();
-        b.putString("category", sampleText);
-        b.putString("entriesUrl", entriesUrl);
-        f.setArguments(b);
-        return f;
+        CategoryFragment frag = new CategoryFragment();
+        Bundle args = new Bundle();
+        args.putString("category", sampleText);
+        args.putString("entriesUrl", entriesUrl);
+        frag.setArguments(args);
+        return frag;
     }
 
     OnArticleSelectedListener mListener;

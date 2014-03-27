@@ -4,10 +4,9 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -18,11 +17,19 @@ public class WebViewFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
 
+    WebView webView;
+
     public static final WebViewFragment newInstance() {
         WebViewFragment frag = new WebViewFragment();
         Bundle args = new Bundle();
         frag.setArguments(args);
         return frag;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -32,7 +39,7 @@ public class WebViewFragment extends Fragment {
         Log.d(TAG, "Fragment-onCreateView");
         View view = inflater.inflate(R.layout.fragment_browse, container ,false);
 
-        WebView webView = (WebView) view.findViewById(R.id.browser);
+        webView = (WebView) view.findViewById(R.id.browser);
         webView.setWebViewClient(new WebViewClient(){
             // @see http://www.adakoda.com/android/000291.html
             @Override
@@ -46,7 +53,9 @@ public class WebViewFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 Log.d(TAG, "WebView:onPageFinished...");
-                getActivity().setProgressBarIndeterminateVisibility(false);
+                ActionBarActivity activity = (ActionBarActivity) getActivity();
+                activity.getSupportActionBar().setTitle(webView.getTitle());
+                activity.setProgressBarIndeterminateVisibility(false);
             }
         });
 
@@ -58,23 +67,26 @@ public class WebViewFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.mainmenu, menu);
-//    }
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.item1:
-//                webView.reload();
-//                break;
-//            case R.id.item2:
-//                webView.goBack();
-//                break;
-//            default:
-//                break;
-//        }
-//        return true;
-//    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.browse, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.reload:
+                webView.reload();
+                break;
+            case R.id.back:
+                webView.goBack();
+                break;
+            case R.id.forward:
+                webView.goForward();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
 }
