@@ -31,7 +31,6 @@ public class BrowseActivity extends ActionBarActivity {
 
     @Override
     protected void onResume() {
-        // animateIn this activity
         ActivitySwitcher.animationIn(findViewById(android.R.id.content), getWindowManager());
         super.onResume();
     }

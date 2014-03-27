@@ -40,7 +40,7 @@ public class WebViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_browse, container ,false);
 
         webView = (WebView) view.findViewById(R.id.browser);
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
             // @see http://www.adakoda.com/android/000291.html
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -65,6 +65,12 @@ public class WebViewFragment extends Fragment {
         webView.loadUrl(getArguments().getString("url"));
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        webView.destroy();
+        super.onDestroyView();
     }
 
     @Override
