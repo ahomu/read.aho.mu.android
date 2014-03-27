@@ -1,5 +1,6 @@
 package mu.aho.read;
 
+import android.content.Intent;
 import android.support.v4.app.*;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -18,6 +19,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.widget.TabWidget;
 import mu.aho.read.loader.HttpAsyncTaskLoader;
 import mu.aho.read.view.CategoryTabView;
+import mu.aho.read.CategoryFragment.OnArticleSelectedListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +36,8 @@ import org.json.JSONObject;
 /**
  * Created by ahomu on 3/26/14.
  */
-public class MainActivity extends FragmentActivity implements LoaderCallbacks<JSONObject>, OnTabChangeListener, OnPageChangeListener {
+public class MainActivity extends FragmentActivity
+        implements LoaderCallbacks<JSONObject>, OnTabChangeListener, OnPageChangeListener, OnArticleSelectedListener {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -86,6 +89,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<JS
         // ここでのtabcontent用Fragmentは実際には使わないのでダミー
         mTabHost.addTab(tabSpec, Fragment.class, bundle);
         fragments.add(frag);
+    }
+
+    public void onArticleSelected(String url, String title) {
+        Log.d(TAG, url);
+        Intent intent = new Intent(MainActivity.this, BrowseActivity.class);
+
+        intent.putExtra("url", url);
+        intent.putExtra("title", title);
+        startActivity(intent);
     }
 
     public class CategoriesAdapter extends FragmentPagerAdapter {
