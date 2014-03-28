@@ -112,6 +112,10 @@ public class CategoryFragment extends ListFragment {
         listView.setDivider(new ColorDrawable(Color.parseColor("#555555")));
         listView.setDividerHeight(1);
 
+        // @see http://stackoverflow.com/questions/21211870/android-view-shadow
+        listView.setBackgroundResource(R.drawable.abc_menu_dropdown_panel_holo_dark);
+        listView.setPadding(12, 12, 12, 0);
+
         FrameLayout parent = (FrameLayout) lvOld.getParent();
 
         parent.removeView(lvOld);
