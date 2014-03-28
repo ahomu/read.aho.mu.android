@@ -99,7 +99,9 @@ public class MainActivity extends FragmentActivity
         animatedStartActivity(intent);
     }
 
-    public class CategoriesAdapter extends FragmentPagerAdapter {
+    public static class CategoriesAdapter extends FragmentPagerAdapter {
+        private final String TAG = getClass().getSimpleName();
+
         private List<Fragment> fragments;
 
         public CategoriesAdapter(FragmentManager fm, List<Fragment> fragments) {
@@ -109,12 +111,12 @@ public class MainActivity extends FragmentActivity
 
         @Override
         public Fragment getItem(int position) {
-            return this.fragments.get(position);
+            return fragments.get(position);
         }
 
         @Override
         public int getCount() {
-            return this.fragments.size();
+            return fragments.size();
         }
     }
 
@@ -131,20 +133,20 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onPageScrolled(int pos, float offset, int offsetPixel) {
         // FIXME 制御バグってる＼(^o^)／
-        Log.d(TAG, "" + pos + ":" + offset + ":" + offsetPixel);
-        Log.d(TAG, "current pos? " + mViewPager.getCurrentItem());
-        if (offset < 0.9 && offset > 0.1) {
-            int amountDelta = Math.round(mScroller.getWidth() * offset);
-            int delta = amountDelta - previousDelta;
-            if (pos < mViewPager.getCurrentItem()) {
-                delta *= -1;
-            }
-            Log.d(TAG, "delta? " + delta);
-            mScroller.scrollBy(delta, 0);
-            previousDelta = amountDelta;
-        } else {
-            previousDelta = 0;
-        }
+//        Log.d(TAG, "" + pos + ":" + offset + ":" + offsetPixel);
+//        Log.d(TAG, "current pos? " + mViewPager.getCurrentItem());
+//        if (offset < 0.9 && offset > 0.1) {
+//            int amountDelta = Math.round(mScroller.getWidth() * offset);
+//            int delta = amountDelta - previousDelta;
+//            if (pos < mViewPager.getCurrentItem()) {
+//                delta *= -1;
+//            }
+//            Log.d(TAG, "delta? " + delta);
+//            mScroller.scrollBy(delta, 0);
+//            previousDelta = amountDelta;
+//        } else {
+//            previousDelta = 0;
+//        }
     }
 
     @Override
