@@ -82,7 +82,7 @@ public class MainActivity extends FragmentActivity
         args.putString("category", categoryName);
         args.putString("color", colorHex);
 
-        CategoryFragment frag = CategoryFragment.newInstance(categoryName, entriesUrl);
+        CategoryFragment frag = CategoryFragment.newInstance(categoryName, entriesUrl, colorHex);
         CategoryTabView tabView = new CategoryTabView(this, args);
 
         TabSpec tabSpec = mTabHost.newTabSpec(categoryName);

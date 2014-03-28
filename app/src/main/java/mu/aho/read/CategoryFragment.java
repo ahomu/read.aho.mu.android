@@ -2,6 +2,8 @@ package mu.aho.read;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -36,11 +38,12 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
 
     LoaderManager mLoaderManager;
 
-    public static final CategoryFragment newInstance(String sampleText, String entriesUrl) {
+    public static final CategoryFragment newInstance(String sampleText, String entriesUrl, String color) {
         CategoryFragment frag = new CategoryFragment();
         Bundle args = new Bundle();
         args.putString("category", sampleText);
         args.putString("entriesUrl", entriesUrl);
+        args.putString("color", color);
         frag.setArguments(args);
         return frag;
     }
@@ -84,6 +87,11 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         listView.setId(android.R.id.list);
         listView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         listView.setDrawSelectorOnTop(false);
+
+        String color = getArguments().getString("color");
+        // @see http://stackoverflow.com/questions/2372415/how-to-change-color-of-android-listview-separator-line
+        listView.setDivider(new ColorDrawable(Color.parseColor(color)));
+        listView.setDividerHeight(2);
 
         FrameLayout parent = (FrameLayout) lvOld.getParent();
 
