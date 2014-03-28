@@ -13,8 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.markupartist.android.widget.PullToRefreshListView;
+import com.markupartist.android.widget.PullToRefreshListView.OnRefreshListener;
 import mu.aho.read.loader.HttpAsyncTaskLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,6 +73,30 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
     }
 
     @Override
+    // ListFragmentが内包しているListViewをPullToRefreshListViewと置換する
+    // @see https://github.com/johannilsson/android-pulltorefresh/issues/30
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup viewGroup = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
+
+        View lvOld = viewGroup.findViewById(android.R.id.list);
+
+        final PullToRefreshListView listView = new PullToRefreshListView(getActivity());
+        listView.setId(android.R.id.list);
+        listView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        listView.setDrawSelectorOnTop(false);
+
+        FrameLayout parent = (FrameLayout) lvOld.getParent();
+
+        parent.removeView(lvOld);
+        lvOld.setVisibility(View.GONE);
+
+        parent.addView(listView, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        return viewGroup;
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "CategoryFragment onActivityCreated");
@@ -77,6 +104,17 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         Bundle argsForLoader = new Bundle();
         argsForLoader.putString("entriesUrl", getArguments().getString("entriesUrl"));
         mLoaderManager.initLoader(0, argsForLoader, this);
+
+        setListAdapter(new EntriesAdapter(getActivity(), list));
+
+        ((PullToRefreshListView) getListView()).setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Do work to refresh the list here.
+                Log.d(TAG, "PULL TO REFRESH");
+                mLoaderManager.getLoader(0).forceLoad();
+            }
+        });
     }
 
     @Override
@@ -114,13 +152,16 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
             throw new RuntimeException(e);
         }
 
-        setListAdapter(new EntriesAdapter(getActivity(), list));
+        ((PullToRefreshListView) getListView()).onRefreshComplete();
     }
 
     @Override
     public void onLoaderReset(Loader<JSONObject> loader) {}
 
-    public class EntriesAdapter extends ArrayAdapter {
+    public static class EntriesAdapter extends ArrayAdapter {
+
+        private final String TAG = getClass().getSimpleName();
+
         LayoutInflater inflater;
         ArrayList<JSONObject> entries;
 
