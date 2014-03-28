@@ -11,5 +11,6 @@ public class PageChangeListener {
     }
 
     private PageChangeListener() {
+        // TODO should implements (MainActivityから移植
     }
 }
