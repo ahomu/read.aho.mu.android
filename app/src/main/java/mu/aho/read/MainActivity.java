@@ -153,11 +153,9 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void onPageSelected(int arg0) {
+    public void onPageSelected(int pos) {
         // FIXME 処理がゴリゴリすぎだぃ
         TabWidget tabWidget = mTabHost.getTabWidget();
-
-        int pos = mViewPager.getCurrentItem();
         mTabHost.setCurrentTab(pos);
 
         int delta = 0;
