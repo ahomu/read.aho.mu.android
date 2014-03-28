@@ -27,6 +27,8 @@ dependencies {
         mavenCentral()
     }
     compile 'com.nineoldandroids:library:2.4.0'
+    compile project(':libs:pulltorefresh')
+
 //    compile 'com.fasterxml.jackson.databind:jackson-databind:2.2.+'
 //    compile 'com.fasterxml.jackson.core:jackson-core:2.2.+'
 //    compile 'com.fasterxml.jackson.annotations:jackson-annotations:2.2.+'
