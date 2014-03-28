@@ -6,9 +6,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +15,15 @@ import com.markupartist.android.widget.PullToRefreshListView;
 import com.markupartist.android.widget.PullToRefreshListView.OnRefreshListener;
 import com.nineoldandroids.animation.ObjectAnimator;
 import mu.aho.read.adapter.EntriesArrayAdapter;
-import mu.aho.read.loader.HttpAsyncTaskResult;
-import mu.aho.read.loader.JsonHttpAsyncTaskLoader;
+import mu.aho.read.loader.EntriesLoader;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by ahomu on 3/26/14.
  */
-public class CategoryFragment extends ListFragment implements LoaderCallbacks<HttpAsyncTaskResult<HashMap>> {
+public class CategoryFragment extends ListFragment {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -34,6 +31,13 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
 
     private LoaderManager mLoaderManager;
 
+    private OnEntrySelectedListener mListener;
+
+    /**
+     * ＼＼\\٩( 'ω' )و //／／
+     * @param sampleText String
+     * @param entriesUrl String
+     */
     public static final CategoryFragment newInstance(String sampleText, String entriesUrl) {
         CategoryFragment frag = new CategoryFragment();
         Bundle args = new Bundle();
@@ -43,23 +47,35 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
         return frag;
     }
 
-    OnArticleSelectedListener mListener;
-
-    // @see http://y-anz-m.blogspot.jp/2011/05/androidfragment_19.html
-    public interface OnArticleSelectedListener {
-        public void onArticleSelected(String articleUri, String title);
+    /**
+     * Articleが選択されたときのリスナーインターフェース
+     * @see 'http://y-anz-m.blogspot.jp/2011/05/androidfragment_19.html'
+     */
+    public interface OnEntrySelectedListener {
+        public void onEntrySelected(String articleUri, String title);
     }
 
+    /**
+     * Activity が OnEntrySelectedListenerを実装してるかチェック
+     * @param activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnArticleSelectedListener) activity;
+            mListener = (OnEntrySelectedListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
+            throw new ClassCastException(activity.toString() + " must implement OnEntrySelectedListener");
         }
     }
 
+    /**
+     * アイテムがクリックされたら、ActivityのonEntrySelectedに処理を委譲する
+     * @param listView ListView
+     * @param view View
+     * @param pos Integer
+     * @param id Long
+     */
     public void onListItemClick(ListView listView, View view, int pos, long id) {
         Log.d(TAG, pos + " position clicked");
 
@@ -70,12 +86,18 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
         pos--;
 
         HashMap<String, String> item = list.get(pos);
-        mListener.onArticleSelected(item.get("url"), item.get("title"));
+        mListener.onEntrySelected(item.get("url"), item.get("title"));
     }
 
+    /**
+     * ListFragmentが内包しているListViewをPullToRefreshListViewと置換する
+     * @see 'https://github.com/johannilsson/android-pulltorefresh/issues/30'
+     * @param inflater LayoutInflater
+     * @param container ViewGroup
+     * @param savedInstanceState Bundle
+     * @return View
+     */
     @Override
-    // ListFragmentが内包しているListViewをPullToRefreshListViewと置換する
-    // @see https://github.com/johannilsson/android-pulltorefresh/issues/30
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup viewGroup = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
 
@@ -101,70 +123,52 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
         return viewGroup;
     }
 
+    /**
+     * 色々アレする（主に初期化処理な）
+     * @param savedInstanceState Bundle
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         Log.d(TAG, "CategoryFragment onActivityCreated");
-        mLoaderManager = getLoaderManager();
-        Bundle argsForLoader = new Bundle();
-        argsForLoader.putString("entriesUrl", getArguments().getString("entriesUrl"));
-        mLoaderManager.initLoader(0, argsForLoader, this);
 
         setListAdapter(new EntriesArrayAdapter(getActivity(), list));
         setListShown(false);
+
+        mLoaderManager = getLoaderManager();
+        Bundle argsForLoader = new Bundle();
+        argsForLoader.putString("entriesUrl", getArguments().getString("entriesUrl"));
+        mLoaderManager.initLoader(EntriesLoader.FETCH, argsForLoader, getEntriesLoader());
 
         ((PullToRefreshListView) getListView()).setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // Do work to refresh the list here.
                 Log.d(TAG, "PULL TO REFRESH");
-                mLoaderManager.getLoader(0).forceLoad();
+                mLoaderManager.getLoader(EntriesLoader.FETCH).forceLoad();
             }
         });
     }
 
-    @Override
-    // @see http://stackoverflow.com/questions/10321712/loader-doesnt-start-after-calling-initloader
-    // @see http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html
-    public Loader<HttpAsyncTaskResult<HashMap>> onCreateLoader(int id, Bundle args) {
-        AsyncTaskLoader loader;
-        switch (id) {
-            case 0:
-                Log.d(TAG, "ON CREATE LOADER :" + args.getString("entriesUrl"));
-                loader = new JsonHttpAsyncTaskLoader(getActivity(), args.getString("entriesUrl"));
-                return loader;
-            default:
-                return null;
-        }
+    /**
+     * EntriesLoaderを、コールバック渡しながら取得する
+     * @return EntriesLoader
+     */
+    private EntriesLoader getEntriesLoader() {
+        return new EntriesLoader(getActivity(), new EntriesLoader.CompleteCallback() {
+            public void onSuccess(ArrayList<HashMap> result) {
+
+                setListShown(true);
+                list.clear();
+                list.addAll(result);
+
+                ((PullToRefreshListView) getListView()).onRefreshComplete();
+                ObjectAnimator animator = ObjectAnimator.ofFloat(getListView(), "alpha", 0.50f, 1, 1);
+                animator.setDuration(500);
+                animator.start();
+            }
+        });
     }
-
-    @Override
-    public void onLoadFinished(Loader<HttpAsyncTaskResult<HashMap>> loader, HttpAsyncTaskResult<HashMap> result) {
-        Log.d(TAG, result.toString());
-
-        setListShown(true);
-        list.clear();
-
-        Exception exception = result.getException();
-        if (exception != null) {
-            Toast.makeText(getActivity(), exception.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-
-        ArrayList<HashMap> entries = (ArrayList) result.getData().get("entries");
-        HashMap entry;
-        for (int i = 0; i < entries.size(); i++) {
-            entry = entries.get(i);
-            list.add(entry);
-        }
-
-        ((PullToRefreshListView) getListView()).onRefreshComplete();
-        ObjectAnimator animator = ObjectAnimator.ofFloat(getListView(), "alpha", 0.50f, 1, 1);
-        animator.setDuration(500);
-        animator.start();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<HttpAsyncTaskResult<HashMap>> loader) {}
 }
 

@@ -13,7 +13,10 @@ public class BrowseActivity extends ActionBarActivity {
     private final String TAG = getClass().getSimpleName();
 
     private ActionBar mActionBar;
-
+    /**
+     * ＼＼\\٩( 'ω' )و //／／
+     * @param savedInstanceState Bundle
+     */
     public void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
@@ -27,6 +30,10 @@ public class BrowseActivity extends ActionBarActivity {
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, webViewFrag).commit();
     }
 
+    /**
+     * Activityが復帰したときにアニメーションで入る
+     * 三(((((( ՞ٹ՞)
+     */
     @Override
     protected void onResume() {
         ActivitySwitcher.animationIn(findViewById(android.R.id.content), getWindowManager());

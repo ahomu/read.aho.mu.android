@@ -18,6 +18,9 @@ public class WebViewFragment extends Fragment {
 
     private WebView webView;
 
+    /**
+     * ＼＼\\٩( 'ω' )و //／／
+     */
     public static final WebViewFragment newInstance() {
         WebViewFragment frag = new WebViewFragment();
         Bundle args = new Bundle();
@@ -25,12 +28,22 @@ public class WebViewFragment extends Fragment {
         return frag;
     }
 
+    /**
+     * @param savedInstanceState Bundle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    /**
+     *
+     * @param inflater LayoutInflater
+     * @param container ViewGroup
+     * @param savedInstanceState Bundle
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,7 +66,10 @@ public class WebViewFragment extends Fragment {
                 super.onPageFinished(view, url);
                 Log.d(TAG, "WebView:onPageFinished...");
                 ActionBarActivity activity = (ActionBarActivity) getActivity();
-                activity.getSupportActionBar().setTitle(webView.getTitle());
+                String title = webView.getTitle();
+                if (title != "") {
+                    activity.getSupportActionBar().setTitle(title);
+                }
                 activity.setProgressBarIndeterminateVisibility(false);
             }
         });
@@ -66,18 +82,30 @@ public class WebViewFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Viewを破棄するときに、webViewの途中状態もぶっ壊しておく
+     * FIXME Errorしてるときある...落ちないけど
+     */
     @Override
     public void onDestroyView() {
         webView.destroy();
         super.onDestroyView();
     }
 
+    /**
+     * @param menu Menu
+     * @param inflater MenuInflater
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.browse, menu);
     }
 
+    /**
+     * @param item MenuItem
+     * @return Bool
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
