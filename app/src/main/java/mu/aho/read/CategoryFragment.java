@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.markupartist.android.widget.PullToRefreshListView;
 import com.markupartist.android.widget.PullToRefreshListView.OnRefreshListener;
+import com.nineoldandroids.animation.ObjectAnimator;
 import mu.aho.read.loader.HttpAsyncTaskLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -170,6 +171,9 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         }
 
         ((PullToRefreshListView) getListView()).onRefreshComplete();
+        ObjectAnimator animator = ObjectAnimator.ofFloat(getListView(), "alpha", 0.50f, 1, 1);
+        animator.setDuration(500);
+        animator.start();
     }
 
     @Override
