@@ -2,8 +2,6 @@ package mu.aho.read;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -11,7 +9,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +19,6 @@ import mu.aho.read.loader.HttpAsyncTaskLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 /**
@@ -129,7 +125,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         ArrayList<JSONObject> entries;
 
         public EntriesAdapter(Context context, ArrayList<JSONObject> list) {
-            super(context, R.layout.fragment_category_article, list);
+            super(context, R.layout.item, list);
             entries = list;
             inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -143,12 +139,12 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
             if (null != convertView) {
                 view = convertView;
             } else {
-                view = inflater.inflate(R.layout.fragment_category_article, null);
+                view = inflater.inflate(R.layout.item, null);
             }
             try {
-                TextView titleText = (TextView) view.findViewById(R.id.title);
+                TextView titleText = (TextView) view.findViewById(R.id.item_title);
                 titleText.setText(item.getString("title"));
-                TextView urlText = (TextView) view.findViewById(R.id.url);
+                TextView urlText = (TextView) view.findViewById(R.id.item_url);
                 urlText.setText(item.getString("url"));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -156,7 +152,6 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
 
             return view;
         }
-
 
     }
 }
