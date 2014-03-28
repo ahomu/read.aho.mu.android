@@ -1,7 +1,6 @@
 package mu.aho.read;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,6 +17,7 @@ import android.widget.*;
 import com.markupartist.android.widget.PullToRefreshListView;
 import com.markupartist.android.widget.PullToRefreshListView.OnRefreshListener;
 import com.nineoldandroids.animation.ObjectAnimator;
+import mu.aho.read.adapter.EntriesArrayAdapter;
 import mu.aho.read.loader.HttpAsyncTaskResult;
 import mu.aho.read.loader.JsonHttpAsyncTaskLoader;
 import java.util.ArrayList;
@@ -30,9 +30,9 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
 
     private final String TAG = getClass().getSimpleName();
 
-    ArrayList<HashMap> list = new ArrayList<HashMap>();
+    private ArrayList<HashMap> list = new ArrayList<HashMap>();
 
-    LoaderManager mLoaderManager;
+    private LoaderManager mLoaderManager;
 
     public static final CategoryFragment newInstance(String sampleText, String entriesUrl) {
         CategoryFragment frag = new CategoryFragment();
@@ -111,7 +111,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
         argsForLoader.putString("entriesUrl", getArguments().getString("entriesUrl"));
         mLoaderManager.initLoader(0, argsForLoader, this);
 
-        setListAdapter(new EntriesAdapter(getActivity(), list));
+        setListAdapter(new EntriesArrayAdapter(getActivity(), list));
         setListShown(false);
 
         ((PullToRefreshListView) getListView()).setOnRefreshListener(new OnRefreshListener() {
@@ -166,40 +166,5 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
 
     @Override
     public void onLoaderReset(Loader<HttpAsyncTaskResult<HashMap>> loader) {}
-
-    public static class EntriesAdapter extends ArrayAdapter {
-
-        private final String TAG = getClass().getSimpleName();
-
-        LayoutInflater inflater;
-        ArrayList<HashMap> entries;
-
-        public EntriesAdapter(Context context, ArrayList<HashMap> list) {
-            super(context, R.layout.item, list);
-            entries = list;
-            inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        public View getView(int pos, View convertView, ViewGroup parent) {
-            Log.d(TAG, "GET LIST ITEM VIEW " + pos);
-
-            HashMap<String, String> item = entries.get(pos);
-            View view;
-
-            if (null != convertView) {
-                view = convertView;
-            } else {
-                view = inflater.inflate(R.layout.item, null);
-            }
-
-            TextView titleText = (TextView) view.findViewById(R.id.item_title);
-            titleText.setText(item.get("title"));
-            TextView urlText = (TextView) view.findViewById(R.id.item_url);
-            urlText.setText(item.get("url"));
-
-            return view;
-        }
-
-    }
 }
 

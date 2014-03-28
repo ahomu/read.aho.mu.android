@@ -14,8 +14,8 @@ import mu.aho.read.R;
  */
 public class CategoryTabView extends FrameLayout {
     public String originalColor;
-    LayoutInflater inflater;
-    TextView labelView;
+    private LayoutInflater inflater;
+    private TextView labelView;
 
     public CategoryTabView(Context context) {
         super(context);

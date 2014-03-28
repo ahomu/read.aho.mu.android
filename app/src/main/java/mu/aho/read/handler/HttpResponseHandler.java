@@ -14,6 +14,7 @@ import java.io.IOException;
  */
 // @see http://terurou.hateblo.jp/entry/20110702/1309541200
 public class HttpResponseHandler implements ResponseHandler {
+
     private final String TAG = getClass().getSimpleName();
 
     @Override

@@ -1,7 +1,6 @@
 package mu.aho.read.transformer;
 
 import android.support.v4.view.ViewPager.PageTransformer;
-import android.util.Log;
 import android.view.View;
 
 /**

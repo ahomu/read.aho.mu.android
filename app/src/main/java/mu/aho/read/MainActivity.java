@@ -6,7 +6,6 @@ import android.support.v4.app.*;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,21 +19,13 @@ import java.util.HashMap;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.widget.TabWidget;
 import android.widget.Toast;
+import mu.aho.read.adapter.CategoriesPagerAdapter;
 import mu.aho.read.loader.HttpAsyncTaskResult;
 import mu.aho.read.loader.JsonHttpAsyncTaskLoader;
 import mu.aho.read.transformer.SlidePageTransformer;
 import mu.aho.read.view.CategoryTabView;
 import mu.aho.read.CategoryFragment.OnArticleSelectedListener;
 
-// @see http://davidjkelley.net/?p=34
-// @see http://just-another-blog.net/programming/how-to-implement-horizontal-view-swiping-with-tabs/
-// @see http://k-1-ne-jp.blogspot.jp/2013/11/fragmenttabhost.html
-// @see http://yyyank.blogspot.jp/2013/07/androidapisummarize-deprecated-class.html
-// @see http://stackoverflow.com/questions/17687717/tutorial-to-implement-the-use-of-tabhost-in-android-2-2-viewpager-and-fragment
-
-// TODO ライブラリ使ってもよかったらこっちのが妥当そうだ･･･。
-// @see https://github.com/astuetz/PagerSlidingTabStrip
-// @see http://developer.android.com/samples/SlidingTabsBasic/project.html
 /**
  * Created by ahomu on 3/26/14.
  */
@@ -43,13 +34,13 @@ public class MainActivity extends FragmentActivity
 
     private final String TAG = getClass().getSimpleName();
 
-    ViewPager mViewPager;
-    FragmentTabHost mTabHost;
-    HorizontalScrollView mScroller;
-    LoaderManager mLoaderManager;
-    CategoriesAdapter mPageAdapter;
-    View mDivider;
-    ArrayList<Fragment> fragments = new ArrayList<Fragment>();
+    private ViewPager mViewPager;
+    private FragmentTabHost mTabHost;
+    private HorizontalScrollView mScroller;
+    private LoaderManager mLoaderManager;
+    private CategoriesPagerAdapter mPageAdapter;
+    private View mDivider;
+    private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +55,7 @@ public class MainActivity extends FragmentActivity
         mTabHost     = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mScroller    = (HorizontalScrollView) findViewById(R.id.scroller);
         mDivider     = findViewById(R.id.tab_divider);
-        mPageAdapter = new CategoriesAdapter(getSupportFragmentManager(), fragments);
+        mPageAdapter = new CategoriesPagerAdapter(getSupportFragmentManager(), fragments);
 
         // tabs
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
@@ -103,27 +94,6 @@ public class MainActivity extends FragmentActivity
         intent.putExtra("url", url);
         intent.putExtra("title", title);
         animatedStartActivity(intent);
-    }
-
-    public static class CategoriesAdapter extends FragmentPagerAdapter {
-        private final String TAG = getClass().getSimpleName();
-
-        private ArrayList<Fragment> fragments;
-
-        public CategoriesAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
-            super(fm);
-            this.fragments = fragments;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
     }
 
     @Override

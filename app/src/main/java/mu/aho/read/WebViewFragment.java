@@ -16,7 +16,7 @@ public class WebViewFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
 
-    WebView webView;
+    private WebView webView;
 
     public static final WebViewFragment newInstance() {
         WebViewFragment frag = new WebViewFragment();
@@ -60,10 +60,7 @@ public class WebViewFragment extends Fragment {
 
         webView.setScrollbarFadingEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
-//        webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setJavaScriptEnabled(true);
-//        webView.getSettings().setUseWideViewPort(true);
-//        webView.getSettings().setBuiltInZoomControls(true);
         webView.loadUrl(getArguments().getString("url"));
 
         return view;
@@ -80,6 +77,7 @@ public class WebViewFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.browse, menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

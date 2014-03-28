@@ -1,8 +1,6 @@
 package mu.aho.read;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Window;
@@ -14,7 +12,7 @@ public class BrowseActivity extends ActionBarActivity {
 
     private final String TAG = getClass().getSimpleName();
 
-    ActionBar mActionBar;
+    private ActionBar mActionBar;
 
     public void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);

@@ -18,9 +18,9 @@ public abstract class HttpAsyncTaskLoader<T> extends AsyncTaskLoader {
 
     private final String TAG = getClass().getSimpleName();
 
-    protected HttpAsyncTaskResult<T> result;
+    private  String requestUrl;
 
-    protected String requestUrl;
+    protected HttpAsyncTaskResult<T> result;
 
     public HttpAsyncTaskLoader(Context context, String url) {
         super(context);
