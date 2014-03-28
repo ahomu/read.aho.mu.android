@@ -169,7 +169,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onPageScrollStateChanged(int state) {}
 
-    int previousDelta = 0;
+    int previousOffsetPx = 0;
 
     /**
      * ページがスクロールしたときに...何かをしたい
@@ -179,21 +179,26 @@ public class MainActivity extends FragmentActivity
      */
     @Override
     public void onPageScrolled(int pos, float offset, int offsetPixel) {
-        // FIXME 制御バグってる＼(^o^)／
-//        Log.d(TAG, "" + pos + ":" + offset + ":" + offsetPixel);
-//        Log.d(TAG, "current pos? " + mViewPager.getCurrentItem());
-//        if (offset < 0.9 && offset > 0.1) {
-//            int amountDelta = Math.round(mScroller.getWidth() * offset);
-//            int delta = amountDelta - previousDelta;
-//            if (pos < mViewPager.getCurrentItem()) {
-//                delta *= -1;
-//            }
-//            Log.d(TAG, "delta? " + delta);
-//            mScroller.scrollBy(delta, 0);
-//            previousDelta = amountDelta;
-//        } else {
-//            previousDelta = 0;
-//        }
+        Log.d(TAG, "" + pos + ":" + offset + ":" + offsetPixel);
+
+        if (offset < 0.9 && offset > 0.1) {
+            int delta;
+            if (pos < mViewPager.getCurrentItem()) {
+                delta = (offsetPixel - previousOffsetPx) / 3;
+            } else {
+                delta = (offsetPixel - previousOffsetPx) / 3;
+            }
+            mScroller.scrollBy(delta, 0);
+            previousOffsetPx = offsetPixel;
+        } else if (offsetPixel == 0) {
+            onTabChanged("");
+        } else {
+            if (pos < mViewPager.getCurrentItem()) {
+                previousOffsetPx = mScroller.getWidth();
+            } else {
+                previousOffsetPx = 0;
+            }
+        }
     }
 
     /**
