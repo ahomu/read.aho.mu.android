@@ -19,8 +19,8 @@ import java.util.List;
 
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.widget.TabWidget;
-import com.nineoldandroids.animation.ObjectAnimator;
-import mu.aho.read.loader.HttpAsyncTaskLoader;
+import mu.aho.read.loader.HttpAsyncTaskLoader.HttpAsyncTaskResult;
+import mu.aho.read.loader.JsonHttpAsyncTaskLoader;
 import mu.aho.read.transformer.SlidePageTransformer;
 import mu.aho.read.view.CategoryTabView;
 import mu.aho.read.CategoryFragment.OnArticleSelectedListener;
@@ -41,7 +41,7 @@ import org.json.JSONObject;
  * Created by ahomu on 3/26/14.
  */
 public class MainActivity extends FragmentActivity
-        implements LoaderCallbacks<JSONObject>, OnTabChangeListener, OnPageChangeListener, OnArticleSelectedListener {
+        implements LoaderCallbacks<HttpAsyncTaskResult>, OnTabChangeListener, OnPageChangeListener, OnArticleSelectedListener {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -188,12 +188,12 @@ public class MainActivity extends FragmentActivity
     @Override
     // @see http://stackoverflow.com/questions/10321712/loader-doesnt-start-after-calling-initloader
     // @see http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html
-    public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
+    public Loader<HttpAsyncTaskResult> onCreateLoader(int id, Bundle args) {
         AsyncTaskLoader loader;
         switch (id) {
             case 0:
                 Log.d(TAG, "ON CREATE LOADER :" + "http://read.aho.mu/categories.json");
-                loader = new HttpAsyncTaskLoader(this, "http://read.aho.mu/categories.json");
+                loader = new JsonHttpAsyncTaskLoader(this, "http://read.aho.mu/categories.json");
                 return loader;
             default:
                 return null;
@@ -201,11 +201,10 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void onLoadFinished(Loader<JSONObject> loader, JSONObject result) {
-        Log.d(TAG, "onLoadFinished(੭ु˵＞ヮ＜)੭ु⁾⁾");
-        Log.d(TAG, result.toString());
+    public void onLoadFinished(Loader<HttpAsyncTaskResult> loader, HttpAsyncTaskResult result) {
+        Log.d(TAG, "ON LOAD FINISHED");
         try {
-            JSONArray categories = result.getJSONArray("categories");
+            JSONArray categories = ((JSONObject) result.getData()).getJSONArray("categories");
             JSONObject category;
             Integer iz = categories.length();
             for (int i = 0; i < iz; i++) {
@@ -228,7 +227,7 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void onLoaderReset(Loader<JSONObject> loader) {}
+    public void onLoaderReset(Loader<HttpAsyncTaskResult> loader) {}
 
     @Override
     protected void onResume() {

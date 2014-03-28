@@ -19,7 +19,7 @@ public class HttpResponseHandler implements ResponseHandler {
     @Override
     public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
 
-        Log.d(TAG, "HANDLE RESPONSE...");
+        Log.d(TAG, "START HANDLE RESPONSE");
 
         // response.getStatusLine().getStatusCode()でレスポンスコードを判定する。
         // 正常に通信できた場合、HttpStatus.SC_OK（HTTP 200）となる。

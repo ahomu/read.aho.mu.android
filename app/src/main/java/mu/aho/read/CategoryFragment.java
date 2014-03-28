@@ -20,8 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.markupartist.android.widget.PullToRefreshListView;
 import com.markupartist.android.widget.PullToRefreshListView.OnRefreshListener;
-import com.nineoldandroids.animation.ObjectAnimator;
-import mu.aho.read.loader.HttpAsyncTaskLoader;
+import mu.aho.read.loader.HttpAsyncTaskLoader.HttpAsyncTaskResult;
+import mu.aho.read.loader.JsonHttpAsyncTaskLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,8 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by ahomu on 3/26/14.
  */
-
-public class CategoryFragment extends ListFragment implements LoaderCallbacks<JSONObject> {
+public class CategoryFragment extends ListFragment implements LoaderCallbacks<HttpAsyncTaskResult> {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -137,12 +136,12 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
     @Override
     // @see http://stackoverflow.com/questions/10321712/loader-doesnt-start-after-calling-initloader
     // @see http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html
-    public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
+    public Loader<HttpAsyncTaskResult> onCreateLoader(int id, Bundle args) {
         AsyncTaskLoader loader;
         switch (id) {
             case 0:
                 Log.d(TAG, "ON CREATE LOADER :" + args.getString("entriesUrl"));
-                loader = new HttpAsyncTaskLoader(getActivity(), args.getString("entriesUrl"));
+                loader = new JsonHttpAsyncTaskLoader(getActivity(), args.getString("entriesUrl"));
                 return loader;
             default:
                 return null;
@@ -150,7 +149,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
     }
 
     @Override
-    public void onLoadFinished(Loader<JSONObject> loader, JSONObject result) {
+    public void onLoadFinished(Loader<HttpAsyncTaskResult> loader, HttpAsyncTaskResult result) {
         Log.d(TAG, "list size -> " + list.size());
         Log.d(TAG, result.toString());
 
@@ -159,7 +158,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
 
         try {
             // TODO 最初からArrayListとかふんわりとした型で取得できないか？
-            JSONArray entries = result.getJSONArray("entries");
+            JSONArray entries = ((JSONObject) result.getData()).getJSONArray("entries");
             JSONObject entry;
             Integer iz = entries.length();
             for (int i = 0; i < iz; i++) {
@@ -171,13 +170,13 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         }
 
         ((PullToRefreshListView) getListView()).onRefreshComplete();
-        ObjectAnimator animator = ObjectAnimator.ofFloat(getListView(), "alpha", 0.50f, 1, 1);
-        animator.setDuration(500);
-        animator.start();
+//        ObjectAnimator animator = ObjectAnimator.ofFloat(getListView(), "alpha", 0.50f, 1, 1);
+//        animator.setDuration(500);
+//        animator.start();
     }
 
     @Override
-    public void onLoaderReset(Loader<JSONObject> loader) {}
+    public void onLoaderReset(Loader<HttpAsyncTaskResult> loader) {}
 
     public static class EntriesAdapter extends ArrayAdapter {
 
