@@ -61,7 +61,10 @@ public class WebViewFragment extends Fragment {
 
         webView.setScrollbarFadingEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
+//        webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setJavaScriptEnabled(true);
+//        webView.getSettings().setUseWideViewPort(true);
+//        webView.getSettings().setBuiltInZoomControls(true);
         webView.loadUrl(getArguments().getString("url"));
 
         return view;

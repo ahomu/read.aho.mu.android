@@ -22,7 +22,12 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:19.0.1'
     compile 'com.android.support:support-v4:19.0.1'
     compile 'com.android.support:appcompat-v7:19.0.1'
-//    compile 'com.fasterxml.jackson.core:jackson-databind:2.2.+'
+
+    repositories {
+        mavenCentral()
+    }
+    compile 'com.nineoldandroids:library:2.4.0'
+//    compile 'com.fasterxml.jackson.databind:jackson-databind:2.2.+'
 //    compile 'com.fasterxml.jackson.core:jackson-core:2.2.+'
-//    compile 'com.fasterxml.jackson.core:jackson-annotations:2.2.+'
+//    compile 'com.fasterxml.jackson.annotations:jackson-annotations:2.2.+'
 }

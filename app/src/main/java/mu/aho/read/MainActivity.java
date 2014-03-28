@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mScroller = (HorizontalScrollView) findViewById(R.id.scroller);
-        mViewPager.setPageTransformer(true, new DepthPageTransformer());
+        mViewPager.setPageTransformer(true, new SlidePageTransformer());
 
         // tabs
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
@@ -120,25 +120,40 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onTabChanged(String tag) {
-        int pos = this.mTabHost.getCurrentTab();
-        this.mViewPager.setCurrentItem(pos);
+        int pos = mTabHost.getCurrentTab();
+        mViewPager.setCurrentItem(pos);
     }
 
     @Override
-    public void onPageScrollStateChanged(int arg0) {
-    }
+    public void onPageScrollStateChanged(int state) {}
 
+    int previousDelta = 0;
     @Override
-    public void onPageScrolled(int arg0, float arg1, int arg2) {
+    public void onPageScrolled(int pos, float offset, int offsetPixel) {
+        // FIXME 制御バグってる＼(^o^)／
+        Log.d(TAG, "" + pos + ":" + offset + ":" + offsetPixel);
+        Log.d(TAG, "current pos? " + mViewPager.getCurrentItem());
+        if (offset < 0.9 && offset > 0.1) {
+            int amountDelta = Math.round(mScroller.getWidth() * offset);
+            int delta = amountDelta - previousDelta;
+            if (pos < mViewPager.getCurrentItem()) {
+                delta *= -1;
+            }
+            Log.d(TAG, "delta? " + delta);
+            mScroller.scrollBy(delta, 0);
+            previousDelta = amountDelta;
+        } else {
+            previousDelta = 0;
+        }
     }
 
     @Override
     public void onPageSelected(int arg0) {
         // FIXME 処理がゴリゴリすぎだぃ
-        TabWidget tabWidget = this.mTabHost.getTabWidget();
+        TabWidget tabWidget = mTabHost.getTabWidget();
 
-        int pos = this.mViewPager.getCurrentItem();
-        this.mTabHost.setCurrentTab(pos);
+        int pos = mViewPager.getCurrentItem();
+        mTabHost.setCurrentTab(pos);
 
         int delta = 0;
         for (int i = 0; i < pos; i++) {
@@ -156,7 +171,7 @@ public class MainActivity extends FragmentActivity
         tab = (CategoryTabView) tabWidget.getChildAt(pos);
         tab.setBackgroundColor("blue");
 
-        this.mScroller.scrollTo(delta, 0);
+        mScroller.smoothScrollTo(delta, 0);
     }
 
     @Override
