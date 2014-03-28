@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="/Users/ayumusato/Dropbox/Playground/SmartNews/libs/pulltorefresh/assets" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="/Users/ayumusato/Dropbox/Playground/SmartNews/libs/pulltorefresh/src/release/assets" />
+    </dataSet>
+
+</merger>
