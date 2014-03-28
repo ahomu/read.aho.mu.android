@@ -13,8 +13,8 @@ import mu.aho.read.R;
  * Created by ayumusato on 3/26/14.
  */
 public class CategoryTabView extends FrameLayout {
+    public String originalColor;
     LayoutInflater inflater;
-    String originalHex;
     TextView labelView;
 
     public CategoryTabView(Context context) {
@@ -27,12 +27,12 @@ public class CategoryTabView extends FrameLayout {
         View child = inflater.inflate(R.layout.tab, null);
         labelView = (TextView) child.findViewById(R.id.tag_label);
         labelView.setText(args.getString("category"));
-        originalHex = args.getString("color");
+        originalColor = args.getString("color");
         addView(child);
     }
 
     public void setActiveColor() {
-        labelView.setTextColor(Color.parseColor(originalHex));
+        labelView.setTextColor(Color.parseColor(originalColor));
     }
 
     public void setInactiveColor() {

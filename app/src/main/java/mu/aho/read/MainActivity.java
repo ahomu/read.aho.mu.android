@@ -1,6 +1,7 @@
 package mu.aho.read;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.*;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -47,6 +49,7 @@ public class MainActivity extends FragmentActivity
     HorizontalScrollView mScroller;
     LoaderManager mLoaderManager;
     CategoriesAdapter pageAdapter;
+    View mDivider;
     List<Fragment> fragments = new ArrayList<Fragment>();
 
     @Override
@@ -59,9 +62,9 @@ public class MainActivity extends FragmentActivity
         mLoaderManager.initLoader(0, null, this);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
-        mScroller = (HorizontalScrollView) findViewById(R.id.scroller);
-        mViewPager.setPageTransformer(true, new SlidePageTransformer());
+        mTabHost   = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        mScroller  = (HorizontalScrollView) findViewById(R.id.scroller);
+        mDivider   = findViewById(R.id.tab_divider);
 
         // tabs
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
@@ -71,6 +74,7 @@ public class MainActivity extends FragmentActivity
         pageAdapter = new CategoriesAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setOnPageChangeListener(this);
+        mViewPager.setPageTransformer(true, new SlidePageTransformer());
 
         addTabAndFragment("ALL FEEDS", "http://read.aho.mu/top/index.json", "#FFFFFF");
         ((CategoryTabView) mTabHost.getTabWidget().getChildAt(0)).setActiveColor();
@@ -82,7 +86,7 @@ public class MainActivity extends FragmentActivity
         args.putString("category", categoryName);
         args.putString("color", colorHex);
 
-        CategoryFragment frag = CategoryFragment.newInstance(categoryName, entriesUrl, colorHex);
+        CategoryFragment frag = CategoryFragment.newInstance(categoryName, entriesUrl);
         CategoryTabView tabView = new CategoryTabView(this, args);
 
         TabSpec tabSpec = mTabHost.newTabSpec(categoryName);
@@ -126,7 +130,10 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onTabChanged(String tag) {
         int pos = mTabHost.getCurrentTab();
+        String color = ((CategoryTabView) mTabHost.getTabWidget().getChildAt(pos)).originalColor;
+
         mViewPager.setCurrentItem(pos);
+        mDivider.setBackgroundColor(Color.parseColor(color));
     }
 
     @Override

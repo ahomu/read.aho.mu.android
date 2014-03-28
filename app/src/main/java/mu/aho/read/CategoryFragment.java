@@ -38,12 +38,11 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
 
     LoaderManager mLoaderManager;
 
-    public static final CategoryFragment newInstance(String sampleText, String entriesUrl, String color) {
+    public static final CategoryFragment newInstance(String sampleText, String entriesUrl) {
         CategoryFragment frag = new CategoryFragment();
         Bundle args = new Bundle();
         args.putString("category", sampleText);
         args.putString("entriesUrl", entriesUrl);
-        args.putString("color", color);
         frag.setArguments(args);
         return frag;
     }
@@ -67,6 +66,13 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
 
     public void onListItemClick(ListView listView, View view, int pos, long id) {
         Log.d(TAG, pos + " position clicked");
+
+        // !!! PullToRefreshListView の addHeaderView で追加されてるのでposがひとつズレてる
+        if (pos == 0) {
+            return;
+        }
+        pos--;
+
         try {
             JSONObject item = list.get(pos);
             mListener.onArticleSelected(item.getString("url"), item.getString("title"));
@@ -88,10 +94,9 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         listView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         listView.setDrawSelectorOnTop(false);
 
-        String color = getArguments().getString("color");
         // @see http://stackoverflow.com/questions/2372415/how-to-change-color-of-android-listview-separator-line
-        listView.setDivider(new ColorDrawable(Color.parseColor(color)));
-        listView.setDividerHeight(2);
+        listView.setDivider(new ColorDrawable(Color.parseColor("#555555")));
+        listView.setDividerHeight(1);
 
         FrameLayout parent = (FrameLayout) lvOld.getParent();
 
@@ -107,6 +112,8 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+
         Log.d(TAG, "CategoryFragment onActivityCreated");
         mLoaderManager = getLoaderManager();
         Bundle argsForLoader = new Bundle();
@@ -114,6 +121,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         mLoaderManager.initLoader(0, argsForLoader, this);
 
         setListAdapter(new EntriesAdapter(getActivity(), list));
+        setListShown(false);
 
         ((PullToRefreshListView) getListView()).setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -145,6 +153,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<JS
         Log.d(TAG, "list size -> " + list.size());
         Log.d(TAG, result.toString());
 
+        setListShown(true);
         list.clear();
 
         try {
