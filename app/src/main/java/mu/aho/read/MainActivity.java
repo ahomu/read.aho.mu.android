@@ -18,6 +18,7 @@ import java.util.List;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.widget.TabWidget;
 import mu.aho.read.loader.HttpAsyncTaskLoader;
+import mu.aho.read.transformer.SlidePageTransformer;
 import mu.aho.read.view.CategoryTabView;
 import mu.aho.read.CategoryFragment.OnArticleSelectedListener;
 import org.json.JSONArray;

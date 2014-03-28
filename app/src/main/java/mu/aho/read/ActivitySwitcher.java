@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import mu.aho.read.animation.Rotate3dAnimation;
 
 /**
  * Created by ayumusato on 3/27/14.

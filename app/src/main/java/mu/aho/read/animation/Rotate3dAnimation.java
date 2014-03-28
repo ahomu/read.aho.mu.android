@@ -1,4 +1,4 @@
-package mu.aho.read;
+package mu.aho.read.animation;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;

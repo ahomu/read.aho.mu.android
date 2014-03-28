@@ -1,4 +1,4 @@
-package mu.aho.read;
+package mu.aho.read.transformer;
 
 import android.support.v4.view.ViewPager.PageTransformer;
 import android.view.View;
