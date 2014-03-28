@@ -14,27 +14,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.markupartist.android.widget.PullToRefreshListView;
 import com.markupartist.android.widget.PullToRefreshListView.OnRefreshListener;
-import mu.aho.read.loader.HttpAsyncTaskLoader.HttpAsyncTaskResult;
+import com.nineoldandroids.animation.ObjectAnimator;
+import mu.aho.read.loader.HttpAsyncTaskResult;
 import mu.aho.read.loader.JsonHttpAsyncTaskLoader;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by ahomu on 3/26/14.
  */
-public class CategoryFragment extends ListFragment implements LoaderCallbacks<HttpAsyncTaskResult> {
+public class CategoryFragment extends ListFragment implements LoaderCallbacks<HttpAsyncTaskResult<HashMap>> {
 
     private final String TAG = getClass().getSimpleName();
 
-    ArrayList<JSONObject> list = new ArrayList<JSONObject>();
+    ArrayList<HashMap> list = new ArrayList<HashMap>();
 
     LoaderManager mLoaderManager;
 
@@ -73,12 +69,8 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
         }
         pos--;
 
-        try {
-            JSONObject item = list.get(pos);
-            mListener.onArticleSelected(item.getString("url"), item.getString("title"));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        HashMap<String, String> item = list.get(pos);
+        mListener.onArticleSelected(item.get("url"), item.get("title"));
     }
 
     @Override
@@ -113,7 +105,6 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
         Log.d(TAG, "CategoryFragment onActivityCreated");
         mLoaderManager = getLoaderManager();
         Bundle argsForLoader = new Bundle();
@@ -136,7 +127,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
     @Override
     // @see http://stackoverflow.com/questions/10321712/loader-doesnt-start-after-calling-initloader
     // @see http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html
-    public Loader<HttpAsyncTaskResult> onCreateLoader(int id, Bundle args) {
+    public Loader<HttpAsyncTaskResult<HashMap>> onCreateLoader(int id, Bundle args) {
         AsyncTaskLoader loader;
         switch (id) {
             case 0:
@@ -149,43 +140,41 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
     }
 
     @Override
-    public void onLoadFinished(Loader<HttpAsyncTaskResult> loader, HttpAsyncTaskResult result) {
-        Log.d(TAG, "list size -> " + list.size());
+    public void onLoadFinished(Loader<HttpAsyncTaskResult<HashMap>> loader, HttpAsyncTaskResult<HashMap> result) {
         Log.d(TAG, result.toString());
 
         setListShown(true);
         list.clear();
 
-        try {
-            // TODO 最初からArrayListとかふんわりとした型で取得できないか？
-            JSONArray entries = ((JSONObject) result.getData()).getJSONArray("entries");
-            JSONObject entry;
-            Integer iz = entries.length();
-            for (int i = 0; i < iz; i++) {
-                entry = entries.getJSONObject(i);
-                list.add(entry);
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        Exception exception = result.getException();
+        if (exception != null) {
+            Toast.makeText(getActivity(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        ArrayList<HashMap> entries = (ArrayList) result.getData().get("entries");
+        HashMap entry;
+        for (int i = 0; i < entries.size(); i++) {
+            entry = entries.get(i);
+            list.add(entry);
         }
 
         ((PullToRefreshListView) getListView()).onRefreshComplete();
-//        ObjectAnimator animator = ObjectAnimator.ofFloat(getListView(), "alpha", 0.50f, 1, 1);
-//        animator.setDuration(500);
-//        animator.start();
+        ObjectAnimator animator = ObjectAnimator.ofFloat(getListView(), "alpha", 0.50f, 1, 1);
+        animator.setDuration(500);
+        animator.start();
     }
 
     @Override
-    public void onLoaderReset(Loader<HttpAsyncTaskResult> loader) {}
+    public void onLoaderReset(Loader<HttpAsyncTaskResult<HashMap>> loader) {}
 
     public static class EntriesAdapter extends ArrayAdapter {
 
         private final String TAG = getClass().getSimpleName();
 
         LayoutInflater inflater;
-        ArrayList<JSONObject> entries;
+        ArrayList<HashMap> entries;
 
-        public EntriesAdapter(Context context, ArrayList<JSONObject> list) {
+        public EntriesAdapter(Context context, ArrayList<HashMap> list) {
             super(context, R.layout.item, list);
             entries = list;
             inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -194,7 +183,7 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
         public View getView(int pos, View convertView, ViewGroup parent) {
             Log.d(TAG, "GET LIST ITEM VIEW " + pos);
 
-            JSONObject item = entries.get(pos);
+            HashMap<String, String> item = entries.get(pos);
             View view;
 
             if (null != convertView) {
@@ -202,14 +191,11 @@ public class CategoryFragment extends ListFragment implements LoaderCallbacks<Ht
             } else {
                 view = inflater.inflate(R.layout.item, null);
             }
-            try {
-                TextView titleText = (TextView) view.findViewById(R.id.item_title);
-                titleText.setText(item.getString("title"));
-                TextView urlText = (TextView) view.findViewById(R.id.item_url);
-                urlText.setText(item.getString("url"));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+
+            TextView titleText = (TextView) view.findViewById(R.id.item_title);
+            titleText.setText(item.get("title"));
+            TextView urlText = (TextView) view.findViewById(R.id.item_url);
+            urlText.setText(item.get("url"));
 
             return view;
         }

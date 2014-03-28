@@ -1,6 +1,5 @@
 package mu.aho.read;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

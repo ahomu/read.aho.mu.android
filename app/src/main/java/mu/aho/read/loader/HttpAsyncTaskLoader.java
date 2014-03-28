@@ -35,8 +35,8 @@ public abstract class HttpAsyncTaskLoader<T> extends AsyncTaskLoader {
     public abstract T parseResponse(String result);
 
     @Override
-    public HttpAsyncTaskResult<T> loadInBackground() {
-        result = new HttpAsyncTaskResult<T>();
+    public HttpAsyncTaskResult loadInBackground() {
+        result = new HttpAsyncTaskResult();
         String rawResponse;
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -58,29 +58,5 @@ public abstract class HttpAsyncTaskLoader<T> extends AsyncTaskLoader {
         }
 
         return result;
-    }
-
-    public class HttpAsyncTaskResult<T> {
-
-        private Exception exception;
-
-        private T data;
-
-        public void setException(Exception exception) {
-            this.exception = exception;
-        }
-
-        public Exception getException() {
-            return exception;
-        }
-
-        public void setData(T data) {
-            this.data = data;
-        }
-
-        public T getData() {
-            return data;
-        }
-
     }
 }

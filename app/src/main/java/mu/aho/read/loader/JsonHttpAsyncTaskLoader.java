@@ -1,23 +1,25 @@
 package mu.aho.read.loader;
 
 import android.content.Context;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by ayumusato on 3/28/14.
  */
-public class JsonHttpAsyncTaskLoader extends HttpAsyncTaskLoader<JSONObject> {
+public class JsonHttpAsyncTaskLoader extends HttpAsyncTaskLoader<HashMap> {
 
     public JsonHttpAsyncTaskLoader(Context context, String url) {
         super(context, url);
     }
 
-    public JSONObject parseResponse(String rawResponse) {
-        JSONObject ret = null;
+    public HashMap parseResponse(String rawResponse) {
+        HashMap ret = null;
         try {
-            ret = new JSONObject(rawResponse);
-        } catch(JSONException e) {
+            ret = new ObjectMapper().readValue(rawResponse, HashMap.class);
+        } catch(IOException e) {
             result.setException(e);
         }
         return ret;
