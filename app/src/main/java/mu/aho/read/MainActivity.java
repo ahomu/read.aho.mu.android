@@ -19,6 +19,7 @@ import java.util.List;
 
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.widget.TabWidget;
+import com.nineoldandroids.animation.ObjectAnimator;
 import mu.aho.read.loader.HttpAsyncTaskLoader;
 import mu.aho.read.transformer.SlidePageTransformer;
 import mu.aho.read.view.CategoryTabView;
@@ -221,7 +222,6 @@ public class MainActivity extends FragmentActivity
         }
 
         pageAdapter.notifyDataSetChanged();
-
         // TODO カテゴリーは起動時に1回読んだら、あとはsavedInstanceで振り回そうと思う次第
         // FIXME ので、ここでasyncLoaderを使い捨てるけど、よくない感じがするー
         getSupportLoaderManager().destroyLoader(0);
