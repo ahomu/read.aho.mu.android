@@ -71,22 +71,24 @@ public class MainActivity extends FragmentActivity
         mViewPager.setAdapter(pageAdapter);
         mViewPager.setOnPageChangeListener(this);
 
-        addTabAndFragment("ALL FEEDS", "http://read.aho.mu/top/index.json");
+        addTabAndFragment("ALL FEEDS", "http://read.aho.mu/top/index.json", "#FFFFFF");
+        ((CategoryTabView) mTabHost.getTabWidget().getChildAt(0)).setActiveColor();
         pageAdapter.notifyDataSetChanged();
     }
 
-    public void addTabAndFragment(String categoryName, String entriesUrl) {
-        CategoryFragment frag = CategoryFragment.newInstance(categoryName, entriesUrl);
-        CategoryTabView tabView = new CategoryTabView(this, categoryName);
+    public void addTabAndFragment(String categoryName, String entriesUrl, String colorHex) {
+        Bundle args = new Bundle();
+        args.putString("category", categoryName);
+        args.putString("color", colorHex);
 
-        Bundle bundle = new Bundle();
-        bundle.putString("category", categoryName);
+        CategoryFragment frag = CategoryFragment.newInstance(categoryName, entriesUrl);
+        CategoryTabView tabView = new CategoryTabView(this, args);
 
         TabSpec tabSpec = mTabHost.newTabSpec(categoryName);
         tabSpec.setIndicator(tabView);
 
         // ここでのtabcontent用Fragmentは実際には使わないのでダミー
-        mTabHost.addTab(tabSpec, Fragment.class, bundle);
+        mTabHost.addTab(tabSpec, Fragment.class, args);
         fragments.add(frag);
     }
 
@@ -168,10 +170,10 @@ public class MainActivity extends FragmentActivity
         int iz = tabWidget.getChildCount();
         for (int i = 0; i < iz; i++) {
             tab = (CategoryTabView) tabWidget.getChildAt(i);
-            tab.setBackgroundColor("black");
+            tab.setInactiveColor();
         }
         tab = (CategoryTabView) tabWidget.getChildAt(pos);
-        tab.setBackgroundColor("blue");
+        tab.setActiveColor();
 
         mScroller.smoothScrollTo(delta, 0);
     }
@@ -203,7 +205,8 @@ public class MainActivity extends FragmentActivity
                 category = categories.getJSONObject(i);
                 addTabAndFragment(
                         category.getString("name").toUpperCase(),
-                        "http://read.aho.mu/categories/" + category.getString("id") + ".json"
+                        "http://read.aho.mu/categories/" + category.getString("id") + ".json",
+                        category.getString("color")
                 );
                 Log.d(TAG, category.getString("name") + "Added");
             }
