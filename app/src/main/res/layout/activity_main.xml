@@ -5,6 +5,7 @@
     android:id="@android:id/tabhost"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,9 +15,7 @@
                 android:id="@+id/layTab"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerVertical="true"
-                android:gravity="center" >
+                android:layout_alignParentTop="true" >
 
             <HorizontalScrollView
                     android:id="@+id/scroller"
@@ -34,6 +33,19 @@
                 </TabWidget>
             </HorizontalScrollView>
 
+            <LinearLayout
+                    android:id="@+id/tab_divider"
+                    android:background="#fff"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/scroller"
+                    android:layout_width="fill_parent"
+                    android:layout_height="4dp" />
+
+            <android.support.v4.view.ViewPager
+                    android:id="@+id/pager"
+                    android:layout_below="@+id/tab_divider"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent" />
         </RelativeLayout>
 
         <FrameLayout
@@ -44,22 +56,10 @@
 
         <FrameLayout
                 android:id="@+id/content"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-        <LinearLayout
-                android:id="@+id/tab_divider"
-                android:background="#fff"
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="4dp" />
-
-        <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_gravity="bottom" />
     </LinearLayout>
 
 </android.support.v4.app.FragmentTabHost>
