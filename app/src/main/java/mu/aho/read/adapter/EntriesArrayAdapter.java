@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import mu.aho.read.R;
 
@@ -31,21 +32,28 @@ public class EntriesArrayAdapter extends ArrayAdapter {
     public View getView(int pos, View convertView, ViewGroup parent) {
         Log.d(TAG, "GET LIST ITEM VIEW " + pos);
 
+        final ViewHolder holder;
+
         HashMap<String, String> item = entries.get(pos);
-        View view;
 
         if (null != convertView) {
-            view = convertView;
+            holder = (ViewHolder) convertView.getTag();
         } else {
-            view = inflater.inflate(R.layout.item, null);
+            convertView = inflater.inflate(R.layout.item, null);
+            holder = new ViewHolder();
+            holder.title = (TextView) convertView.findViewById(R.id.item_title);
+            holder.url = (TextView) convertView.findViewById(R.id.item_url);
+            convertView.setTag(holder);
         }
 
-        TextView titleText = (TextView) view.findViewById(R.id.item_title);
-        titleText.setText(item.get("title"));
-        TextView urlText = (TextView) view.findViewById(R.id.item_url);
-        urlText.setText(item.get("url"));
+        holder.title.setText(item.get("title"));
+        holder.url.setText(item.get("url"));
 
-        return view;
+        return convertView;
     }
 
+    static class ViewHolder {
+        TextView title;
+        TextView url;
+    }
 }
