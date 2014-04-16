@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class CategoriesPagerAdapter extends FragmentPagerAdapter {
     private final String TAG = getClass().getSimpleName();
 
+    // FIXME ここでfragmentsを抱え込まないようにしたほうがよいらしい FragmentPagerAdapterの本来の機能を見た方が良い
     private ArrayList<Fragment> fragments;
 
     public CategoriesPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
